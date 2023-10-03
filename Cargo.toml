@@ -1,0 +1,53 @@
+[package]
+name = "utils-box"
+version = "0.1.1"
+edition = "2021"
+authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+description = "A toolbox of various small RUST utilities that make our lifes easier"
+categories = ["utilities"]
+keywords = [
+    "tools", "utilities", "utils", "toolbox"
+]
+exclude = [
+    ".github",
+    "Cargo.toml.orig",
+    "cargo_vcs_info.json",
+]
+repository = "https://github.com/klispap/utils-box"
+
+
+[dependencies]
+anyhow = "1.0.69"
+log = "0.4.17"
+simplelog = "0.11.0"
+file-rotate = "0.7.1"
+chrono = "0.4.22"
+lazy_static = "1.4.0"
+tokio = { version = "1", features = ["rt", "net", "macros", "time", "rt-multi-thread"] }
+tokio-util = "0.6.7"
+futures = "0.3.15"
+rayon = "1.6.0"
+walkdir = "2.3.2"
+tar = "0.4.38"
+zmq = "0.10.0"
+glob = "0.3.1"
+flate2 = "1.0"
+semver = "1.0.16"
+zip = "0.6.4"
+regex = "1.7.1"
+names = "0.14.0"
+rust-ini = "0.18.0"
+directories = "5.0.1"
+
+[target.'cfg(unix)'.dependencies]
+ssh2 = { version = "0.9.4", features = ["vendored-openssl"] }
+signal-hook = "0.3.9"
+signal-hook-tokio = { version = "0.3.0", features = ["futures-v0_3"] }
+
+[dev-dependencies]
+indoc = "1.0.3"
+tempfile = "3.2.0"
+named-lock = "0.3.0"
