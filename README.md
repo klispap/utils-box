@@ -87,6 +87,36 @@ Mininal Example:
 
 ```
 
+## Stopwatch and Timekeper
+Keep track of execution times in various points in binaries. Print records.
+
+Minimal Example:
+```rust
+    let mut s = TimeKeeper::init();
+    let mut t = TimeKeeper::init();
+
+    s.totals();
+
+    s.lap("init");
+
+    for _ in 0..5 {
+        std::thread::sleep(Duration::from_millis(5));
+        s.lap("loop");
+        t.lap("loop");
+    }
+    s.lap_totals("loop");
+    std::thread::sleep(Duration::from_millis(1234));
+    s.lap("after");
+
+    s.totals();
+    t.totals();
+
+    s.merge(t);
+
+    s.totals();
+
+```
+
 ## Versions
 version parser from strings using the `semver.org` notations
 

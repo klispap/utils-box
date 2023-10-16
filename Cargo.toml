@@ -1,6 +1,6 @@
 [package]
 name = "utils-box"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
 license = "MIT"
