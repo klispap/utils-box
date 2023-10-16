@@ -260,4 +260,61 @@ mod tests {
 
         extract_all(archive, ArchiveType::Zip, destination).unwrap();
     }
+
+    #[test]
+    fn archive_extract_all_zip_test() {
+        let archive: PathBuf = std::env::current_exe()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .join("../../../test_data/test_archives.zip");
+
+        let destination: PathBuf = std::env::temp_dir().join("utils-box");
+
+        // Create a named lock to make sure no other test messes with the same files!
+        let lock = NamedLock::create("archives_tests").unwrap();
+        let _guard = lock.lock().unwrap();
+
+        let _ = std::fs::remove_dir_all(destination.clone());
+
+        archive_extract_all(archive, destination).unwrap();
+    }
+
+    #[test]
+    fn archive_extract_all_tar_test() {
+        let archive: PathBuf = std::env::current_exe()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .join("../../../test_data/test_archives.tar");
+
+        let destination: PathBuf = std::env::temp_dir().join("utils-box");
+
+        // Create a named lock to make sure no other test messes with the same files!
+        let lock = NamedLock::create("archives_tests").unwrap();
+        let _guard = lock.lock().unwrap();
+
+        let _ = std::fs::remove_dir_all(destination.clone());
+
+        archive_extract_all(archive, destination).unwrap();
+    }
+
+    #[test]
+    fn archive_extract_all_targz_test() {
+        let archive: PathBuf = std::env::current_exe()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .join("../../../test_data/test_archives.tar.gz");
+
+        let destination: PathBuf = std::env::temp_dir().join("utils-box");
+
+        // Create a named lock to make sure no other test messes with the same files!
+        let lock = NamedLock::create("archives_tests").unwrap();
+        let _guard = lock.lock().unwrap();
+
+        let _ = std::fs::remove_dir_all(destination.clone());
+
+        archive_extract_all(archive, destination).unwrap();
+    }
 }

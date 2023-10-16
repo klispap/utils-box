@@ -189,9 +189,10 @@ macro_rules! log_error {
 #[cfg(test)]
 mod tests {
     use crate::logger::*;
+    use tempfile::tempdir;
 
     #[test]
-    fn logger_test() {
+    fn terminal_logger_init_test() {
         log_info!("INFO Test TO PRINTLN!");
         log_debug!("DEBUG Test TO PRINTLN!");
 
@@ -204,7 +205,24 @@ mod tests {
     }
 
     #[test]
-    fn results_logger_test() {
+    fn combined_logger_init_test() {
+        let log_dir = tempdir().expect("Failed to create temp directory!");
+
+        if !log::logger().enabled(&crate::logger::DUMMY) {
+            combined_logger_init(
+                LevelFilter::Debug,
+                LevelFilter::Debug,
+                log_dir.path().to_str().unwrap(),
+                "test",
+            );
+        }
+
+        log_info!("INFO Test TO combined LOGGER!");
+        log_debug!("DEBUG Test TO combined LOGGER!");
+    }
+
+    #[test]
+    fn results_macros_test() {
         log_info!("INFO Test TO PRINTLN!");
         results_info!("RESULTS Test from PRINTLN!");
 

@@ -4,14 +4,9 @@
 
 use anyhow::Result;
 use ini::Ini;
-use std::{
-    collections::HashSet,
-    fs::File,
-    io::{Read, Write},
-    path::PathBuf,
-};
+use std::{collections::HashSet, path::PathBuf};
 
-use crate::{log_debug, log_trace};
+use crate::log_debug;
 
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct IniCompare {
@@ -153,46 +148,76 @@ pub fn ini_compare(a: &PathBuf, b: &PathBuf) -> Result<IniCompare> {
 }
 
 /// Update file using the comparison results
-/// Currect Policy supports updates of specific fields
-pub fn ini_update(new_ini_file: &PathBuf, comparison: IniCompare) -> Result<()> {
-    let mut new_config = File::open(new_ini_file)?;
+/// Do not modify protected properties
+pub fn ini_update(
+    new_ini_file: &PathBuf,
+    comparison: &IniCompare,
+    protected_properties: &[&str],
+) -> Result<()> {
+    // Open File A and Extract Information
+    let mut new_config = Ini::load_from_file(new_ini_file)?;
 
-    // Convert file into a mutable stream so we can do "sed"-like operations over it
-    let mut file_stream = String::new();
-    new_config.read_to_string(&mut file_stream)?;
-
-    // List of properties to keep the new values
-    // EVERYTHING ELSE will be replaced with the previous protected value
-    let unprotected_properties = ["config_file_version"];
-
+    // Protected properties will keep the old values
+    // EVERYTHING ELSE will be replaced with the new value
     for updates in comparison.updated.iter() {
-        if unprotected_properties
+        if protected_properties
             .iter()
-            .any(|&x| x == updates.1.property)
+            .any(|&x| x == updates.0.property)
         {
             continue;
         }
 
         log_debug!(
             "[ini][update] SECTION: [{:?}] PROPERTY: [{:?}] VALUE: [{:?}] => [{:?}]",
-            updates.1.section,
-            updates.1.property,
-            updates.1.value,
+            updates.0.section,
+            updates.0.property,
             updates.0.value,
+            updates.1.value,
         );
 
-        file_stream = file_stream.replace(
-            &format!("{} = {}", updates.1.property, updates.1.value),
-            &format!("{} = {}", updates.0.property, updates.0.value),
+        new_config.set_to(
+            updates.0.section.clone(),
+            updates.0.property.clone(),
+            updates.1.value.clone(),
         );
     }
 
-    log_trace!("[ini][update] NEW CONFIGURATION:\n{}", file_stream);
+    // Protected properties will keep the old values
+    // EVERYTHING ELSE will be deleted
+    for deletions in comparison.deleted.iter() {
+        if protected_properties
+            .iter()
+            .any(|&x| x == deletions.property)
+        {
+            continue;
+        }
 
-    // Replace the file with new one
-    let mut new_config = File::options().write(true).open(new_ini_file)?;
+        log_debug!(
+            "[ini][update] SECTION: [{:?}] PROPERTY: [{:?}] VALUE: [{:?}] => [DELETED]",
+            deletions.section,
+            deletions.property,
+            deletions.value,
+        );
 
-    new_config.write_all(file_stream.as_bytes())?;
+        new_config.delete_from(deletions.section.clone(), &deletions.property);
+    }
+
+    for additions in comparison.added.iter() {
+        log_debug!(
+            "[ini][update] SECTION: [{:?}] PROPERTY: [{:?}] VALUE: [{:?}] => [ADDED]",
+            additions.section,
+            additions.property,
+            additions.value,
+        );
+
+        new_config.set_to(
+            additions.section.clone(),
+            additions.property.clone(),
+            additions.value.clone(),
+        );
+    }
+
+    new_config.write_to_file(new_ini_file)?;
 
     Ok(())
 }
@@ -357,5 +382,139 @@ mod tests {
         results.updated.sort_unstable();
 
         assert_eq!(expected, results);
+    }
+
+    #[test]
+    fn update_test() {
+        let mut a_ini = NamedTempFile::new().expect("Failed to create temp file!");
+        let mut updated_ini = NamedTempFile::new().expect("Failed to create temp file!");
+
+        let config = indoc! {r#"
+        [version]
+        ; format: <major>.<minor>. Example 1.2
+        config_file_version = 10.0
+
+        ; A list of compatible FPGA bitstreams.
+        compatible_fpga = 2.0.0
+
+        ; Possible values: A1, B2
+        sys_variant = B2
+
+        [log]
+        ; This parameter sets the minimum log level that will be printed.
+        ; 0 = Trace
+        ; 1 = Debug
+        ; 2 = Info
+        ; 3 = Warning
+        ; 4 = Error
+        ; 5 = Fatal
+        log_level = 0
+        test_removed = 3
+
+        [board_control]
+        ref_clk_select = INT
+
+        ; This setting deactivates dynamic fan speed control.
+        always_apply_full_fan_speed = 0
+
+        "#};
+
+        writeln!(a_ini, "{}", config).expect("Failed to write to temp file!");
+        writeln!(updated_ini, "{}", config).expect("Failed to write to temp file!");
+
+        let mut b_ini = NamedTempFile::new().expect("Failed to create temp file!");
+
+        let config = indoc! {r#"
+        [version]
+        ; format: <major>.<minor>. Example 1.2
+        config_file_version = 10.1
+
+        ; A list of compatible FPGA bitstreams.
+        ; If the bitstream loaded to the board is not found in the list below, the firmware will not operate.
+        ; The version string should follow "X.Y.Z" format. All versions should be separated with a space character.
+        ; Typically, this field should not be modified in a file provided in the release
+        ; package. Note that entering a version that is not compatible might lead to firmware crash.
+        compatible_fpga = 2.0.0
+
+        ; Possible values: A1, B2
+        ; Basing on this parameter value the FW configures the Tx Board and selects how many and which PA channels are to be used.
+        ; The behavior when any other parameter is selected is undefined.
+        sys_variant = UNDEFINED
+
+        [log]
+        ; This parameter sets the minimum log level that will be printed.
+        ; 0 = Trace
+        ; 1 = Debug
+        ; 2 = Info
+        ; 3 = Warning
+        ; 4 = Error
+        ; 5 = Fatal
+        log_level = 2
+
+        [power_control]
+        test_added = YEAH
+
+        [board_control]
+        ref_clk_select = INT
+
+        ; This setting deactivates dynamic fan speed control.
+        always_apply_full_fan_speed = 0
+
+"#};
+
+        writeln!(b_ini, "{}", config).expect("Failed to write to temp file!");
+
+        let results = ini_compare(
+            &a_ini.into_temp_path().to_path_buf(),
+            &b_ini.into_temp_path().to_path_buf(),
+        )
+        .unwrap();
+
+        let mut new_ini = NamedTempFile::new().expect("Failed to create temp file!");
+
+        let update_ini_path = updated_ini.into_temp_path().keep().unwrap();
+
+        ini_update(&update_ini_path, &results, &vec![]).unwrap();
+
+        let expected_config = indoc! {r#"
+        [version]
+        ; format: <major>.<minor>. Example 1.2
+        config_file_version = 10.1
+
+        ; A list of compatible FPGA bitstreams.
+        compatible_fpga = 2.0.0
+
+        ; Possible values: A1, B2
+        sys_variant = UNDEFINED
+
+        [log]
+        ; This parameter sets the minimum log level that will be printed.
+        ; 0 = Trace
+        ; 1 = Debug
+        ; 2 = Info
+        ; 3 = Warning
+        ; 4 = Error
+        ; 5 = Fatal
+        log_level = 2
+
+        [power_control]
+        test_added = YEAH
+
+        [board_control]
+        ref_clk_select = INT
+
+        ; This setting deactivates dynamic fan speed control.
+        always_apply_full_fan_speed = 0
+
+"#};
+
+        writeln!(new_ini, "{}", expected_config).expect("Failed to write to temp file!");
+
+        let results =
+            ini_compare(&update_ini_path, &new_ini.into_temp_path().to_path_buf()).unwrap();
+
+        assert!(results.added.is_empty());
+        assert!(results.deleted.is_empty());
+        assert!(results.updated.is_empty());
     }
 }
