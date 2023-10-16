@@ -199,14 +199,19 @@
 pub mod archives;
 pub mod bits;
 pub mod config;
+#[cfg(not(tarpaulin_include))]
 pub mod debug;
 pub mod paths;
 pub mod versions;
 
+#[cfg(not(tarpaulin_include))]
 #[cfg(target_family = "unix")]
 pub mod ssh_client;
+#[cfg(not(tarpaulin_include))]
 pub mod tcp_client;
+#[cfg(not(tarpaulin_include))]
 pub mod udp_client;
+#[cfg(not(tarpaulin_include))]
 pub mod zmq_client;
 
 #[macro_use]
@@ -214,4 +219,5 @@ pub mod logger;
 pub mod stopwatch;
 
 #[cfg(target_family = "unix")]
+#[cfg(not(tarpaulin_include))]
 pub mod threads;
