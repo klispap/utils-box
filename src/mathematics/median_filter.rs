@@ -13,12 +13,12 @@ pub enum MedianPaddingMode {
 /// Wrapper to call median_filter() with the most useful configuration
 /// ZeroPad and IncludeNaN are active
 pub fn medianfilter_default(x: &[f64], n: usize) -> Vec<f64> {
-    return moving_median_filter(
+    moving_median_filter(
         x,
         n,
         MedianPaddingMode::ZeroPad,
         MedianMissingMode::IncludeNaN,
-    );
+    )
 }
 
 /// An implementation of Moving Median Filtering
@@ -32,7 +32,7 @@ pub fn moving_median_filter(
 ) -> Vec<f64> {
     let len = x.len();
     let mut y = vec![0.0; len];
-    for i in 0..len {
+    for (i, y_value) in y.iter_mut().enumerate() {
         let mut segment: Vec<f64> = vec![];
         let mut segment_start: i64 = i as i64 - (n as i64 - 1) / 2;
         if n % 2 == 0 {
@@ -41,10 +41,9 @@ pub fn moving_median_filter(
         for j in 0..n {
             let index = segment_start + j as i64;
             if index < 0 || index >= len as i64 {
-                if padding == MedianPaddingMode::ZeroPad {
-                    segment.push(0.0);
-                } else if padding == MedianPaddingMode::Truncate {
-                    continue;
+                match padding {
+                    MedianPaddingMode::ZeroPad => segment.push(0.0),
+                    MedianPaddingMode::Truncate => continue,
                 }
             } else {
                 segment.push(x[index as usize]);
@@ -56,20 +55,21 @@ pub fn moving_median_filter(
         }
 
         if segment.iter().any(|x| x.is_nan()) {
-            y[i] = f64::NAN;
+            *y_value = f64::NAN;
             continue;
         }
 
         segment.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
         if segment.len() % 2 == 1 {
-            y[i] = segment[segment.len() / 2];
+            *y_value = segment[segment.len() / 2];
         } else {
             let middle = segment.len() / 2;
-            y[i] = (segment[middle - 1] + segment[middle]) / 2.0;
+            *y_value = (segment[middle - 1] + segment[middle]) / 2.0;
         }
     }
-    return y;
+
+    y
 }
 
 fn remove_nan(segment: &[f64]) -> Vec<f64> {

@@ -5,6 +5,9 @@ A toolbox library that holds a useful collection of small unitilies written in R
 
 # Utilities provided:
  
+## Mathematics
+A collection of useful methematic methods used in various DSP and other applications
+
 ## Archives
 Extract files from Tar, Gz and Zip Files
 
