@@ -3,6 +3,9 @@
 //!
 //! # Utilities provided:
 //!
+//! ## Mathematics
+//! A collection of useful methematic methods used in various DSP and other applications
+//!
 //! ## Archives
 //! Extract files from Tar, Gz and Zip Files
 //!
@@ -206,13 +209,7 @@ pub mod versions;
 
 #[cfg(not(tarpaulin_include))]
 #[cfg(target_family = "unix")]
-pub mod ssh_client;
-#[cfg(not(tarpaulin_include))]
-pub mod tcp_client;
-#[cfg(not(tarpaulin_include))]
-pub mod udp_client;
-#[cfg(not(tarpaulin_include))]
-pub mod zmq_client;
+pub mod connections;
 
 #[macro_use]
 pub mod logger;
@@ -221,3 +218,5 @@ pub mod stopwatch;
 #[cfg(target_family = "unix")]
 #[cfg(not(tarpaulin_include))]
 pub mod threads;
+
+pub mod mathematics;
