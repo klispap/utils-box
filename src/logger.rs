@@ -24,7 +24,7 @@ pub fn terminal_logger_init(level: LevelFilter) {
         TerminalMode::Mixed,
         ColorChoice::Auto,
     )
-    .unwrap();
+    .expect("Logger could not be initialized! Other logger is already active!");
 }
 
 // Initialize a terminal and a file logger with the provided log levels
@@ -71,9 +71,7 @@ pub fn combined_logger_init(
             ),
         ),
     ])
-    .unwrap();
-
-    log::logger().enabled(&DUMMY);
+    .expect("Logger could not be initialized! Other logger is already active!");
 
     info!("[logger_init] Calculated log path [{:?}]", log_path);
 }
@@ -84,7 +82,7 @@ lazy_static! {
     /// Scanner Results File (Used for Demos)
     pub static ref RESULTS_FILE: Mutex<File> = {
         let mut log_path = std::env::temp_dir();
-        log_path.push("scanner-results.log");
+        log_path.push("utils-results.log");
 
         Mutex::new(File::options()
             .append(true)
@@ -208,10 +206,13 @@ mod tests {
     fn combined_logger_init_test() {
         let log_dir = tempdir().expect("Failed to create temp directory!");
 
+        log_info!("INFO Test TO PRINTLN!");
+        log_debug!("DEBUG Test TO PRINTLN!");
+
         if !log::logger().enabled(&crate::logger::DUMMY) {
             combined_logger_init(
                 LevelFilter::Debug,
-                LevelFilter::Debug,
+                LevelFilter::Trace,
                 log_dir.path().to_str().unwrap(),
                 "test",
             );

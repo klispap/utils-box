@@ -123,8 +123,11 @@ impl IncludePaths {
 
         for repo in self.unknown_paths.iter().rev() {
             for entry in WalkDir::new(&home_dir)
+                .follow_links(true)
                 .into_iter()
-                .filter_entry(|e| e.file_type().is_dir() && is_not_hidden(e))
+                .filter_entry(|e| {
+                    (e.file_type().is_dir() || e.path_is_symlink()) && is_not_hidden(e)
+                })
             {
                 let e_path = match entry {
                     Err(_) => continue,
@@ -199,10 +202,19 @@ impl IncludePaths {
             require_literal_leading_dot: false,
         };
 
+        // Get HOME directory
+        let home_dir: PathBuf = if let Some(base_dirs) = BaseDirs::new() {
+            base_dirs.home_dir().to_path_buf()
+        } else {
+            log_debug!("[include_paths][search_glob_unknown] Failed to retrieve system's home directory path");
+            PathBuf::new()
+        };
+
         let detected_files: Vec<PathBuf> = {
             let mut tmp: Vec<PathBuf> = vec![];
             for repo in self.unknown_paths.iter() {
-                let mut dir: Vec<PathBuf> = WalkDir::new("/home")
+                let mut dir: Vec<PathBuf> = WalkDir::new(&home_dir)
+                    .follow_links(true)
                     .into_iter()
                     .filter_entry(|e| e.file_type().is_dir() && is_not_hidden(e))
                     .filter_map(|entry| {
@@ -285,8 +297,9 @@ mod tests {
 
         let file = "test_archives.tar";
         assert_eq!(
-            PathBuf::from_str("test_data/test_archives.tar").unwrap(),
-            paths.seek(file).unwrap()
+            std::fs::canonicalize(PathBuf::from_str("test_data/test_archives.tar").unwrap())
+                .unwrap(),
+            std::fs::canonicalize(paths.seek(file).unwrap()).unwrap()
         );
     }
 
@@ -308,7 +321,7 @@ mod tests {
                     .join("../../../src/paths.rs")
             )
             .unwrap(),
-            paths.seek_in_unknown(file).unwrap()
+            std::fs::canonicalize(paths.seek_in_unknown(file).unwrap()).unwrap()
         );
     }
 
@@ -334,7 +347,7 @@ mod tests {
                     .join("../../../src/paths.rs")
             )
             .unwrap(),
-            paths.seek(file).unwrap()
+            std::fs::canonicalize(paths.seek(file).unwrap()).unwrap()
         );
     }
 
