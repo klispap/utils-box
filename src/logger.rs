@@ -41,11 +41,11 @@ pub fn combined_logger_init(
     };
 
     let instance_folder = format!("{}_{:?}", filename_prefix, chrono::offset::Utc::now());
-    log_path.push(format!("{}-logs", filename_prefix));
+    log_path.push(format!("{filename_prefix}-logs"));
     log_path.push(&instance_folder);
-    log_path.push(format!("{}.log", filename_prefix));
+    log_path.push(format!("{filename_prefix}.log"));
 
-    println!("[logger_init] Calculated log path [{:?}]", log_path);
+    println!("[logger_init] Calculated log path [{log_path:?}]");
 
     let log_config = ConfigBuilder::new()
         .set_time_format("%d-%H:%M:%S%.3f".to_string())
@@ -73,7 +73,7 @@ pub fn combined_logger_init(
     ])
     .expect("Logger could not be initialized! Other logger is already active!");
 
-    info!("[logger_init] Calculated log path [{:?}]", log_path);
+    info!("[logger_init] Calculated log path [{log_path:?}]");
 }
 
 lazy_static! {

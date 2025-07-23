@@ -42,7 +42,7 @@ pub fn semver_parse(str: &str) -> Result<Version> {
                 str
             )
         } else {
-            return Ok(Version::parse(&format!("{}.0", result))?);
+            return Ok(Version::parse(&format!("{result}.0"))?);
         };
     } else if full_with_pre.is_match(str) {
         let cap = full_with_pre.captures(str).unwrap();
@@ -71,7 +71,7 @@ pub fn semver_parse(str: &str) -> Result<Version> {
                 str
             )
         } else {
-            return Ok(Version::parse(&format!("{}.0-{}", result, pre))?);
+            return Ok(Version::parse(&format!("{result}.0-{pre}"))?);
         };
     } else {
         bail!(

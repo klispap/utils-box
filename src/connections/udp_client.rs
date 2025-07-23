@@ -17,7 +17,7 @@ pub struct UdpClient {
 
 impl UdpClient {
     pub fn new(local_ip: String, server_ip: String, server_port: u16) -> Result<Self> {
-        let udp_socket = UdpSocket::bind(format!("{}:{}", local_ip, server_port))?;
+        let udp_socket = UdpSocket::bind(format!("{local_ip}:{server_port}"))?;
 
         Ok(UdpClient {
             server_ip,

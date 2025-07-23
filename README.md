@@ -199,3 +199,21 @@ Mininal Example:
     println!("{:?}", resp);
 
 ```
+
+# Tips for resolving Ubuntu 22.04 build issues:
+
+1) Make sure you have the following system-level dependencies installed:
+    ```
+    sudo apt install pkg-config build-essential fontconfig libfontconfig1-dev
+    ``` 
+
+2) Verify that `pkg-config` can detect `libstdc++` properly:
+    ```
+    pkg-config --libs libstdc++
+    ```
+
+3) If `libstdc++` is not detected, add the symbolic link:
+    ```
+    sudo ln -s /usr/lib/gcc/x86_64-linux-gnu/11/libstdc++.so /usr/lib/libstdc++.so
+    ```
+

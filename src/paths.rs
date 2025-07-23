@@ -179,7 +179,7 @@ impl IncludePaths {
                 let new_pattern = new_pattern.to_str().unwrap();
                 glob_with(new_pattern, options)
                     .unwrap()
-                    .filter_map(|path| if let Ok(p) = path { Some(p) } else { None })
+                    .filter_map(|path| path.ok())
                     .collect::<Vec<PathBuf>>()
             })
             .collect();
@@ -238,7 +238,7 @@ impl IncludePaths {
                         Some(
                             glob_with(new_pattern, options)
                                 .unwrap()
-                                .filter_map(|path| if let Ok(p) = path { Some(p) } else { None })
+                                .filter_map(|path| path.ok())
                                 .collect::<Vec<PathBuf>>(),
                         )
                     })

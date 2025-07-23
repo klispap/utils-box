@@ -67,7 +67,7 @@ impl StopWatchStats {
     }
 
     pub fn store_lap(&mut self, lap: &str, time: Duration) -> Duration {
-        match self.lap_totals.get(&lap.to_string()) {
+        match self.lap_totals.get(lap) {
             Some(&(id, total)) => {
                 self.lap_totals.insert(lap.to_string(), (id, time + total));
                 time + total

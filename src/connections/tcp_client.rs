@@ -21,7 +21,7 @@ pub struct TcpClient {
 impl TcpClient {
     /// Create a new TCP connection to the specified server and connect to it
     pub fn new(server_ip: String, server_port: u16) -> Result<Self> {
-        let tcp_stream = TcpStream::connect(format!("{}:{}", server_ip, server_port))?;
+        let tcp_stream = TcpStream::connect(format!("{server_ip}:{server_port}"))?;
 
         Ok(Self {
             server_ip,
@@ -37,12 +37,12 @@ impl TcpClient {
 
     pub fn send(&mut self, data: &[u8]) -> Result<()> {
         match self.tcp_stream.write(data) {
-            Ok(_) => {
+            Ok(size) => {
                 log_trace!(
                     "[TcpClient][{}:{}] Send [{} Bytes] SUCCESSFULLY!",
                     self.server_ip,
                     self.server_port,
-                    data.len()
+                    size
                 );
                 Ok(())
             }

@@ -33,10 +33,10 @@ pub fn panic_handler_init() {
     panic::set_hook(Box::new(|panic_info| {
         match panic_info.payload().downcast_ref::<String>() {
             Some(as_string) => {
-                error!("PANIC occurred: {}", as_string);
+                error!("PANIC occurred: {as_string}");
             }
             None => {
-                error!("PANIC occurred: {:?}", panic_info);
+                error!("PANIC occurred: {panic_info:?}");
             }
         }
         if let Some(location) = panic_info.location() {
@@ -57,6 +57,7 @@ pub fn panic_handler_init() {
 
 /// Helper Function: Handle of System Termination Signals
 #[cfg(target_family = "unix")]
+#[allow(clippy::never_loop)]
 async fn handle_signals(signals: Signals) {
     use log::warn;
 
@@ -66,8 +67,7 @@ async fn handle_signals(signals: Signals) {
         match signal {
             SIGHUP | SIGTERM | SIGINT | SIGQUIT => {
                 warn!(
-                    "SP Scanner [Termination signals] [{:?}] RECEIVED! Terminating Tasks & Exiting...",
-                    signal
+                    "SP Scanner [Termination signals] [{signal:?}] RECEIVED! Terminating Tasks & Exiting..."                   
                 );
                 signal_hook::low_level::exit(1);
             }

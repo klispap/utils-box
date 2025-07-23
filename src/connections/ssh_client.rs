@@ -25,7 +25,7 @@ impl SshClient {
         password: String,
     ) -> Result<Self> {
         // Connect to the local SSH server
-        let tcp_stream = TcpStream::connect(format!("{}:{}", server_ip, server_port))?;
+        let tcp_stream = TcpStream::connect(format!("{server_ip}:{server_port}"))?;
 
         let mut ssh_session = Session::new()?;
         ssh_session.set_tcp_stream(tcp_stream);

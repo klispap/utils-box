@@ -19,7 +19,7 @@ impl ZmqClient {
         let ctx = Context::new();
 
         let socket = ctx.socket(zmq::REQ)?;
-        socket.connect(&format!("tcp://{}:{}", server_ip, server_port))?;
+        socket.connect(&format!("tcp://{server_ip}:{server_port}"))?;
 
         Ok(Self {
             server_ip,
