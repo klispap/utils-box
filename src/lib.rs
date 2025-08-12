@@ -199,6 +199,7 @@
 //! ```
 //!
 
+#[cfg(feature = "archives")]
 pub mod archives;
 pub mod bits;
 pub mod config;
@@ -215,8 +216,8 @@ pub mod connections;
 pub mod logger;
 pub mod stopwatch;
 
+#[cfg(feature = "math")]
+pub mod mathematics;
 #[cfg(target_family = "unix")]
 #[cfg(not(tarpaulin_include))]
 pub mod threads;
-
-pub mod mathematics;

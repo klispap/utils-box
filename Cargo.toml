@@ -1,13 +1,19 @@
 [package]
 name = "utils-box"
-version = "0.1.6"
-edition = "2021"
+version = "0.1.7"
+edition = "2024"
 authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
 description = "A toolbox of various small RUST utilities that make our lifes easier"
-categories = ["development-tools", "mathematics", "config", "network-programming", "parsing"]
+categories = [
+    "development-tools",
+    "mathematics",
+    "config",
+    "network-programming",
+    "parsing",
+]
 keywords = ["tools", "utilities", "utils", "toolbox"]
 exclude = [".github", "Cargo.toml.orig", "cargo_vcs_info.json"]
 repository = "https://github.com/klispap/utils-box"
@@ -36,7 +42,7 @@ zmq = "0.10.0"
 glob = "0.3.1"
 flate2 = "1.0"
 semver = "1.0.16"
-zip = "0.6.4"
+zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
 regex = "1.7.1"
 names = "0.14.0"
 rust-ini = "0.18.0"
@@ -55,3 +61,7 @@ named-lock = "0.3.0"
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
 
+[features]
+default = ["archives", "math"]
+archives = []
+math = []
