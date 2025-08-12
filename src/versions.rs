@@ -42,8 +42,8 @@ pub fn semver_parse(str: &str) -> Result<Version> {
                 str
             )
         } else {
-            return Ok(Version::parse(&format!("{result}.0"))?);
-        };
+            Ok(Version::parse(&format!("{result}.0"))?)
+        }
     } else if full_with_pre.is_match(str) {
         let cap = full_with_pre.captures(str).unwrap();
         let result = cap[0].to_string();
@@ -56,8 +56,8 @@ pub fn semver_parse(str: &str) -> Result<Version> {
                 str
             )
         } else {
-            return Ok(Version::parse(&result)?);
-        };
+            Ok(Version::parse(&result)?)
+        }
     } else if missing_patch_with_pre.is_match(str) {
         let cap = missing_patch_with_pre.captures(str).unwrap();
         let result = cap[1].to_string();
@@ -71,8 +71,8 @@ pub fn semver_parse(str: &str) -> Result<Version> {
                 str
             )
         } else {
-            return Ok(Version::parse(&format!("{result}.0-{pre}"))?);
-        };
+            Ok(Version::parse(&format!("{result}.0-{pre}"))?)
+        }
     } else {
         bail!(
             "[utils][semver_parse] Failed to capture any vesion regex from [{}]!",
