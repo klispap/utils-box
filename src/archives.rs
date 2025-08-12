@@ -2,7 +2,7 @@
 //! A toolbox of small utilities that extract files from archives.
 //! Useful for retrieving files from various types of archives like tar, tar.gz, zip.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use flate2::read::GzDecoder;
 use std::{
     fs::File,

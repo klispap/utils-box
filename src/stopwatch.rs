@@ -107,7 +107,7 @@ impl StopWatchStats {
 
         let mut laps: Vec<(&String, &(u8, Duration))> = self.lap_totals.iter().collect();
         laps.sort_by(|a, b| {
-            if a.1 .0 > b.1 .0 {
+            if a.1.0 > b.1.0 {
                 Ordering::Greater
             } else {
                 Ordering::Less

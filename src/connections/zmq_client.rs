@@ -2,7 +2,7 @@
 //! A small ZMQ utility to connect and manipulate ZMQ connections to a server.
 //! Useful for sending and receiving data via the ZMQ transport layer.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use zmq::{Context, Socket};
 
 use crate::{log_error, log_info, log_trace};

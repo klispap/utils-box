@@ -2,7 +2,7 @@
 //! A toolbox of small utilities based on `semver.org`.
 //! Useful for version control operations.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use regex::Regex;
 use semver::Version;
 

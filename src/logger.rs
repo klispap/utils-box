@@ -5,7 +5,7 @@
 use std::{fs::File, path::PathBuf, str::FromStr, sync::Mutex};
 
 use chrono;
-use file_rotate::{compression::Compression, suffix::AppendCount, ContentLimit, FileRotate};
+use file_rotate::{ContentLimit, FileRotate, compression::Compression, suffix::AppendCount};
 use lazy_static::lazy_static;
 use log::info;
 use simplelog::*;

@@ -67,7 +67,7 @@ async fn handle_signals(signals: Signals) {
         match signal {
             SIGHUP | SIGTERM | SIGINT | SIGQUIT => {
                 warn!(
-                    "SP Scanner [Termination signals] [{signal:?}] RECEIVED! Terminating Tasks & Exiting..."                   
+                    "SP Scanner [Termination signals] [{signal:?}] RECEIVED! Terminating Tasks & Exiting..."
                 );
                 signal_hook::low_level::exit(1);
             }

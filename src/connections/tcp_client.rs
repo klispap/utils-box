@@ -2,7 +2,7 @@
 //! A small TCP utility to connect and manipulate TCP connections to a server.
 //! Useful for sending and receiving data via a TCP socket.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use std::{
     io::{Read, Write},
     net::{Shutdown, TcpStream},

@@ -2,7 +2,7 @@
 //! A small SSH utility to connect and manipulate SSH connections to a server.
 //! Useful for executing commands remotely and uploading/downloading files via SSH.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use ssh2::Session;
 use std::{
     fs::File, io::Read, io::Write, net::TcpStream, os::unix::prelude::PermissionsExt, path::PathBuf,

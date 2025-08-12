@@ -2,9 +2,9 @@
 //! A toolbox of small utilities to handle paths for files.
 //! Useful for searching for files in a pre-determined list of directories or git repositories.
 
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use directories::BaseDirs;
-use glob::{glob_with, MatchOptions};
+use glob::{MatchOptions, glob_with};
 use names::{Generator, Name};
 use std::{path::PathBuf, str::FromStr};
 use walkdir::{DirEntry, WalkDir};
@@ -147,7 +147,9 @@ impl IncludePaths {
             }
         }
 
-        bail!("[include_paths][seek_in_unknown] Failed to find file in directories in included unknown paths");
+        bail!(
+            "[include_paths][seek_in_unknown] Failed to find file in directories in included unknown paths"
+        );
     }
 
     /// Search in directories in known paths first for files matching the glob pattern requested
@@ -206,7 +208,9 @@ impl IncludePaths {
         let home_dir: PathBuf = if let Some(base_dirs) = BaseDirs::new() {
             base_dirs.home_dir().to_path_buf()
         } else {
-            log_debug!("[include_paths][search_glob_unknown] Failed to retrieve system's home directory path");
+            log_debug!(
+                "[include_paths][search_glob_unknown] Failed to retrieve system's home directory path"
+            );
             PathBuf::new()
         };
 

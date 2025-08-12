@@ -2,7 +2,7 @@
 //! A small UDP utility to connect and manipulate UDP connections to a server.
 //! Useful for sending and receiving data via a UDP socket.
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use std::net::UdpSocket;
 
 use crate::{log_error, log_info, log_trace};
