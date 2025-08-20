@@ -127,7 +127,7 @@ macro_rules! results_info {
 #[macro_export]
 macro_rules! log_info {
     ($($arg:tt)+) => {{
-        if log::log_enabled!(log::Level::Trace) {
+        if log::max_level() >= log::Level::Trace {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::info!($($arg)+);
             }
@@ -141,7 +141,7 @@ macro_rules! log_info {
 #[macro_export]
 macro_rules! log_warn {
     ($($arg:tt)+) => {{
-        if log::log_enabled!(log::Level::Warn) {
+        if log::max_level() >= log::Level::Warn {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::warn!($($arg)+);
             }
@@ -155,7 +155,7 @@ macro_rules! log_warn {
 #[macro_export]
 macro_rules! log_debug {
     ($($arg:tt)+) => {{
-        if log::log_enabled!(log::Level::Debug) {
+        if log::max_level() >= log::Level::Debug {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::debug!($($arg)+);
             }
@@ -169,7 +169,7 @@ macro_rules! log_debug {
 #[macro_export]
 macro_rules! log_trace {
     ($($arg:tt)+) => {{
-        if log::log_enabled!(log::Level::Trace) {
+        if log::max_level() >= log::Level::Trace {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::trace!($($arg)+);
             }
@@ -183,7 +183,7 @@ macro_rules! log_trace {
 #[macro_export]
 macro_rules! log_error {
     ($($arg:tt)+) => {{
-        if log::log_enabled!(log::Level::Error) {
+        if log::max_level() >= log::Level::Error {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::error!($($arg)+);
             }
