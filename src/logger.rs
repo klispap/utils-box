@@ -127,7 +127,7 @@ macro_rules! results_info {
 #[macro_export]
 macro_rules! log_info {
     ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Trace {
+        if log::max_level() >= log::Level::Info {
             if log::logger().enabled(&$crate::logger::DUMMY) {
                 log::info!($($arg)+);
             }
