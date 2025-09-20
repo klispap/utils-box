@@ -35,7 +35,7 @@ pub fn moving_median_filter(
     for (i, y_value) in y.iter_mut().enumerate() {
         let mut segment: Vec<f64> = vec![];
         let mut segment_start: i64 = i as i64 - (n as i64 - 1) / 2;
-        if n % 2 == 0 {
+        if n.is_multiple_of(2) {
             segment_start = i as i64 - n as i64 / 2;
         }
         for j in 0..n {

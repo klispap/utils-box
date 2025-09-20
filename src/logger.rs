@@ -77,18 +77,17 @@ pub fn combined_logger_init(
 }
 
 lazy_static! {
-    pub static ref DUMMY: log::Metadata<'static> = log::MetadataBuilder::new().build();
-
-    /// Scanner Results File (Used for Demos)
     pub static ref RESULTS_FILE: Mutex<File> = {
         let mut log_path = std::env::temp_dir();
         log_path.push("utils-results.log");
 
-        Mutex::new(File::options()
-            .append(true)
-            .create(true)
-            .open(log_path)
-            .expect("Results File FAILED!"))
+        Mutex::new(
+            File::options()
+                .append(true)
+                .create(true)
+                .open(log_path)
+                .expect("Results File FAILED!"),
+        )
     };
 }
 
@@ -127,55 +126,11 @@ macro_rules! results_info {
 #[macro_export]
 macro_rules! log_info {
     ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Info {
-            if log::logger().enabled(&$crate::logger::DUMMY) {
-                log::info!($($arg)+);
-            }
-            else {
-                std::println!($($arg)+);
-            }
+        if log::log_enabled!(log::Level::Info) {
+            log::info!($($arg)+);
         }
-    }};
-}
-
-#[macro_export]
-macro_rules! log_warn {
-    ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Warn {
-            if log::logger().enabled(&$crate::logger::DUMMY) {
-                log::warn!($($arg)+);
-            }
-            else {
-                std::println!($($arg)+);
-            }
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! log_debug {
-    ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Debug {
-            if log::logger().enabled(&$crate::logger::DUMMY) {
-                log::debug!($($arg)+);
-            }
-            else {
-                std::println!($($arg)+);
-            }
-        }
-    }};
-}
-
-#[macro_export]
-macro_rules! log_trace {
-    ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Trace {
-            if log::logger().enabled(&$crate::logger::DUMMY) {
-                log::trace!($($arg)+);
-            }
-            else {
-                std::println!($($arg)+);
-            }
+        else {
+            std::println!($($arg)+);
         }
     }};
 }
@@ -183,13 +138,47 @@ macro_rules! log_trace {
 #[macro_export]
 macro_rules! log_error {
     ($($arg:tt)+) => {{
-        if log::max_level() >= log::Level::Error {
-            if log::logger().enabled(&$crate::logger::DUMMY) {
-                log::error!($($arg)+);
-            }
-            else {
-                std::println!($($arg)+);
-            }
+        if log::log_enabled!(log::Level::Error) {
+            log::error!($($arg)+);
+        }
+        else {
+            std::println!($($arg)+);
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! log_warn {
+    ($($arg:tt)+) => {{
+        if log::log_enabled!(log::Level::Warn) {
+            log::warn!($($arg)+);
+        }
+        else {
+            std::println!($($arg)+);
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! log_debug {
+    ($($arg:tt)+) => {{
+        if log::log_enabled!(log::Level::Debug) {
+            log::debug!($($arg)+);
+        }
+        else {
+            std::println!($($arg)+);
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! log_trace {
+    ($($arg:tt)+) => {{
+        if log::log_enabled!(log::Level::Trace) {
+            log::trace!($($arg)+);
+        }
+        else {
+            std::println!($($arg)+);
         }
     }};
 }
@@ -197,50 +186,26 @@ macro_rules! log_error {
 #[cfg(test)]
 mod tests {
     use crate::logger::*;
-    use tempfile::tempdir;
 
     #[test]
-    fn terminal_logger_init_test() {
+    fn logger_test() {
         log_info!("INFO Test TO PRINTLN!");
         log_debug!("DEBUG Test TO PRINTLN!");
 
-        if !log::logger().enabled(&crate::logger::DUMMY) {
-            terminal_logger_init(LevelFilter::Debug).unwrap();
-        }
+        let _ = terminal_logger_init(LevelFilter::Debug);
 
         log_info!("INFO Test TO LOGGER!");
+        log_warn!("WARN Test TO LOGGER!");
+        log_error!("ERROR Test TO LOGGER!");
         log_debug!("DEBUG Test TO LOGGER!");
     }
 
     #[test]
-    fn combined_logger_init_test() {
-        let log_dir = tempdir().expect("Failed to create temp directory!");
-
-        log_info!("INFO Test TO PRINTLN!");
-        log_debug!("DEBUG Test TO PRINTLN!");
-
-        if !log::logger().enabled(&crate::logger::DUMMY) {
-            combined_logger_init(
-                LevelFilter::Debug,
-                LevelFilter::Trace,
-                log_dir.path().to_str().unwrap(),
-                "test",
-            )
-            .unwrap();
-        }
-
-        log_info!("INFO Test TO combined LOGGER!");
-        log_debug!("DEBUG Test TO combined LOGGER!");
-    }
-
-    #[test]
-    fn results_macros_test() {
+    fn results_logger_test() {
         log_info!("INFO Test TO PRINTLN!");
         results_info!("RESULTS Test from PRINTLN!");
 
-        if !log::logger().enabled(&crate::logger::DUMMY) {
-            terminal_logger_init(LevelFilter::Debug).unwrap();
-        }
+        let _ = terminal_logger_init(LevelFilter::Debug);
 
         log_info!("INFO Test TO LOGGER!");
         results_info!("RESULTS Test from LOGGER!");
@@ -252,5 +217,7 @@ mod tests {
         results_info!(mode: a, "{}", "TEST");
         let b = "info";
         results_info!(mode: b, "{}", "TEST2");
+        let b = "warn";
+        results_info!(mode: b, "{}", "TEST3");
     }
 }

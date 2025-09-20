@@ -210,6 +210,7 @@ pub mod versions;
 
 #[cfg(not(tarpaulin_include))]
 #[cfg(target_family = "unix")]
+#[cfg(feature = "connections")]
 pub mod connections;
 
 #[macro_use]
