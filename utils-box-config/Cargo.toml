@@ -1,0 +1,29 @@
+[package]
+name = "utils-box-config"
+version = "1.0.1"
+edition = "2024"
+authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+publish = ["crates-io"]
+
+description = "A toolbox of various small RUST utilities that make handling configuration files easier"
+categories = ["development-tools", "config", "parsing"]
+keywords = ["tools", "utilities", "utils", "toolbox"]
+exclude = [".github", "Cargo.toml.orig", "cargo_vcs_info.json"]
+repository = "https://github.com/klispap/utils-box"
+
+
+[dependencies]
+utils-box-logger = "1.0.1"
+anyhow = "1.0.100"
+log = "0.4.28"
+rust-ini = "0.18.0"
+
+[dev-dependencies]
+indoc = "1.0.9"
+tempfile = "3.22.0"
+named-lock = "0.3.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
