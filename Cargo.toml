@@ -5,7 +5,7 @@ members = [
     "utils-box-archives",
     "utils-box-bits",
     "utils-box-config",
-    # "utils-box-connections",
+    "utils-box-connections",
     # "utils-box-debug",
     "utils-box-logger",
     # "utils-box-mathematics",
