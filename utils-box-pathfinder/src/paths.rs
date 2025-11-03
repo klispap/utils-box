@@ -6,7 +6,7 @@ use anyhow::{Result, anyhow, bail};
 use directories::BaseDirs;
 use glob::{MatchOptions, glob_with};
 use names::{Generator, Name};
-use std::{path::PathBuf, str::FromStr};
+use std::{env, path::PathBuf, str::FromStr};
 use walkdir::{DirEntry, WalkDir};
 
 use utils_box_logger::log_debug;
@@ -111,38 +111,49 @@ impl IncludePaths {
             ))
     }
 
-    /// Seek only in included repositories (ingoring included directories)
+    /// Seek only using the directory names stored with their paths as unknown
     /// Tries to locate the repositories in the current working directory and then going backwards until reaching `$HOME` or `%HOME%`
     pub fn seek_in_unknown(&self, file: &str) -> Result<PathBuf> {
         // Get HOME directory
-        let home_dir: PathBuf = if let Some(base_dirs) = BaseDirs::new() {
+        let _home_dir: PathBuf = if let Some(base_dirs) = BaseDirs::new() {
             base_dirs.home_dir().to_path_buf()
         } else {
-            bail!("[include_paths][seek_in_repos] Failed to retrieve system's home directory path")
+            bail!(
+                "[include_paths][seek_in_unknown] Failed to retrieve system's home directory path"
+            )
+        };
+
+        // Get current working dir
+        let current_dir: PathBuf = if let Ok(curr) = env::current_dir() {
+            curr.to_path_buf().canonicalize()?
+        } else {
+            bail!("[include_paths][seek_in_unknown] Failed to retrieve current directory path")
         };
 
         for repo in self.unknown_paths.iter().rev() {
-            for entry in WalkDir::new(&home_dir)
-                .follow_links(true)
-                .into_iter()
-                .filter_entry(|e| {
-                    (e.file_type().is_dir() || e.path_is_symlink()) && is_not_hidden(e)
-                })
-            {
-                let e_path = match entry {
-                    Err(_) => continue,
-                    Ok(ref e) => e.path(),
-                };
+            for parent_dir in current_dir.ancestors() {
+                for entry in WalkDir::new(parent_dir)
+                    .follow_links(true)
+                    .into_iter()
+                    .filter_entry(|e| {
+                        (e.file_type().is_dir() || e.path_is_symlink()) && is_not_hidden(e)
+                    })
+                {
+                    let e_path = match entry {
+                        Err(_) => continue,
+                        Ok(ref e) => e.path(),
+                    };
 
-                match e_path.file_name() {
-                    Some(f_name) => {
-                        if f_name == repo && e_path.join(file).exists() {
-                            return Ok(e_path.join(file));
-                        } else {
-                            continue;
+                    match e_path.file_name() {
+                        Some(f_name) => {
+                            if f_name == repo && e_path.join(file).exists() {
+                                return Ok(e_path.join(file));
+                            } else {
+                                continue;
+                            }
                         }
+                        None => continue,
                     }
-                    None => continue,
                 }
             }
         }

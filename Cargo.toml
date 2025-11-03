@@ -2,6 +2,7 @@
 resolver = "3"
 
 members = [
+    "utils-box",
     "utils-box-archives",
     "utils-box-bits",
     "utils-box-config",

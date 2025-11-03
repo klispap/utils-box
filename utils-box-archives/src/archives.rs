@@ -26,7 +26,7 @@ pub enum ArchiveType {
 
 /// Entry Point:
 /// Extract the selected file from the provided archive into the selected destination directory
-/// It detects if it is a compressed archive using the magic numbers from: https://www.garykessler.net/library/file_sigs.html
+/// It detects if it is a compressed archive using the magic numbers from: <https://www.garykessler.net/library/file_sigs.html>
 pub fn archive_extract_file(
     archive: PathBuf,
     filename: PathBuf,
@@ -180,14 +180,16 @@ fn extract_all(archive: PathBuf, archive_type: ArchiveType, destination: PathBuf
 mod tests {
     use crate::archives::*;
     use named_lock::*;
+    use utils_box_pathfinder::paths::IncludePathsBuilder;
 
     #[test]
     fn extract_tar_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.tar");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.tar");
 
         let file: PathBuf = "happy_cloud.jpg".into();
 
@@ -199,16 +201,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        extract_file(archive, ArchiveType::Tar, file, destination).unwrap();
+        extract_file(archive[0].clone(), ArchiveType::Tar, file, destination).unwrap();
     }
 
     #[test]
     fn extract_tar_all_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.tar");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.tar");
 
         // Create a named lock to make sure no other test messes with the same files!
         let lock = NamedLock::create("archives_tests").unwrap();
@@ -218,16 +221,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        extract_all(archive, ArchiveType::Tar, destination).unwrap();
+        extract_all(archive[0].clone(), ArchiveType::Tar, destination).unwrap();
     }
 
     #[test]
     fn extract_zip_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.zip");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.zip");
 
         let file: PathBuf = "lorem.txt".into();
 
@@ -239,16 +243,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        extract_file(archive, ArchiveType::Zip, file, destination).unwrap();
+        extract_file(archive[0].clone(), ArchiveType::Zip, file, destination).unwrap();
     }
 
     #[test]
     fn extract_zip_all_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.zip");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.zip");
 
         let destination: PathBuf = std::env::temp_dir().join("utils-box");
 
@@ -258,16 +263,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        extract_all(archive, ArchiveType::Zip, destination).unwrap();
+        extract_all(archive[0].clone(), ArchiveType::Zip, destination).unwrap();
     }
 
     #[test]
     fn archive_extract_all_zip_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.zip");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.zip");
 
         let destination: PathBuf = std::env::temp_dir().join("utils-box");
 
@@ -277,16 +283,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        archive_extract_all(archive, destination).unwrap();
+        archive_extract_all(archive[0].clone(), destination).unwrap();
     }
 
     #[test]
     fn archive_extract_all_tar_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.tar");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.tar");
 
         let destination: PathBuf = std::env::temp_dir().join("utils-box");
 
@@ -296,16 +303,17 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        archive_extract_all(archive, destination).unwrap();
+        archive_extract_all(archive[0].clone(), destination).unwrap();
     }
 
     #[test]
     fn archive_extract_all_targz_test() {
-        let archive: PathBuf = std::env::current_exe()
-            .unwrap()
-            .parent()
-            .unwrap()
-            .join("../../../test_data/test_archives.tar.gz");
+        let paths = IncludePathsBuilder::new()
+            .include_exe_dir()
+            .include_unknown("utils-box-archives/")
+            .build();
+
+        let archive = paths.search_glob("test_archives.tar.gz");
 
         let destination: PathBuf = std::env::temp_dir().join("utils-box");
 
@@ -315,6 +323,6 @@ mod tests {
 
         let _ = std::fs::remove_dir_all(destination.clone());
 
-        archive_extract_all(archive, destination).unwrap();
+        archive_extract_all(archive[0].clone(), destination).unwrap();
     }
 }

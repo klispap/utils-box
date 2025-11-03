@@ -81,7 +81,7 @@ pub fn semver_parse(str: &str) -> Result<Version> {
     }
 }
 
-/// Parse a provide slice and get a semver version in the form of <major>.<minor>.<patch>
+/// Parse a provide slice and get a semver version in the form of \<major\>.<\minor\>.<patch>
 /// If the input has only <major>.<minor>, we expand to <major>.<minor>.0
 /// In case of failure, return 0.0.0
 pub fn semver_parse_or_default(str: &str) -> Version {
