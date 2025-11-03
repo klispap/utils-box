@@ -1,6 +1,6 @@
 [package]
 name = "utils-box-pathfinder"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
 license = "MIT"

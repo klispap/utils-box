@@ -21,7 +21,7 @@ utils-box-connections = { version = "1.0.1", optional = true }
 utils-box-debug = { version = "1.0.1", optional = true }
 utils-box-logger = { version = "1.0.1", optional = true }
 utils-box-mathematics = { version = "1.0.1", optional = true }
-utils-box-pathfinder = { version = "1.0.1", optional = true }
+utils-box-pathfinder = { version = "1.0.2", optional = true }
 utils-box-stopwatch = { version = "1.0.1", optional = true }
 utils-box-linux = { version = "1.0.1", optional = true }
 utils-box-versions = { version = "1.0.1", optional = true }
