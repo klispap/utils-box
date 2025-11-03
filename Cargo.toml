@@ -8,7 +8,7 @@ members = [
     "utils-box-connections",
     "utils-box-debug",
     "utils-box-logger",
-    # "utils-box-mathematics",
+    "utils-box-mathematics",
     # "utils-box-pathfinder",
     # "utils-box-stopwatch",
 ]
