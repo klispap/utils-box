@@ -9,6 +9,6 @@ members = [
     "utils-box-debug",
     "utils-box-logger",
     "utils-box-mathematics",
-    # "utils-box-pathfinder",
+    "utils-box-pathfinder",
     # "utils-box-stopwatch",
 ]
