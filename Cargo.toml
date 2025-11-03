@@ -12,5 +12,5 @@ members = [
     "utils-box-pathfinder",
     "utils-box-stopwatch",
     "utils-box-linux",
-    # "utils-box-versions",
+    "utils-box-versions",
 ]
