@@ -17,36 +17,14 @@ repository = "https://github.com/klispap/utils-box"
 utils-box-logger = "1.0.1"
 anyhow = "1.0.100"
 log = "0.4.28"
-simplelog = "0.11.2"
-file-rotate = "0.7.6"
-chrono = "0.4.42"
-lazy_static = "1.5.0"
-tokio = { version = "1", features = [
-    "rt",
-    "net",
-    "macros",
-    "time",
-    "rt-multi-thread",
-] }
-tokio-util = "0.6.10"
 futures = "0.3.31"
 rayon = "1.11.0"
 walkdir = "2.5.0"
-tar = "0.4.44"
-zmq = "0.10.0"
-glob = "0.3.3"
-flate2 = "1.1"
-semver = "1.0.27"
-zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
-regex = "1.11.2"
+chrono = "0.4.42"
 names = "0.14.0"
-rust-ini = "0.18.0"
+glob = "0.3.3"
+regex = "1.11.2"
 directories = "5.0.1"
-
-[target.'cfg(unix)'.dependencies]
-ssh2 = { version = "0.9.5", features = ["vendored-openssl"] }
-signal-hook = "0.3.18"
-signal-hook-tokio = { version = "0.3.1", features = ["futures-v0_3"] }
 
 [dev-dependencies]
 indoc = "1.0.9"
@@ -55,9 +33,3 @@ named-lock = "0.3.0"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin_include)'] }
-
-[features]
-default = ["archives", "math"]
-archives = []
-math = []
-connections = []
