@@ -1,5 +1,5 @@
 [package]
-name = "utils-box-logger"
+name = "utils-box-archives"
 version = "1.0.1"
 edition = "2024"
 authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
@@ -7,20 +7,20 @@ license = "MIT"
 readme = "README.md"
 publish = ["crates-io"]
 
-description = "A toolbox of various small RUST utilities that make creating logs easier"
-categories = ["development-tools", "config", "parsing"]
+description = "A toolbox of various small RUST utilities that makes handling compressed files easier"
+categories = ["development-tools", "parsing"]
 keywords = ["tools", "utilities", "utils", "toolbox"]
 exclude = [".github", "Cargo.toml.orig", "cargo_vcs_info.json"]
 repository = "https://github.com/klispap/utils-box"
 
-
 [dependencies]
+utils-box-logger = "1.0.1"
 anyhow = "1.0.100"
 log = "0.4.28"
-simplelog = "0.11.2"
-file-rotate = "0.7.6"
-chrono = "0.4.42"
-lazy_static = "1.5.0"
+tar = "0.4.44"
+flate2 = "1.1"
+zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
+regex = "1.11.2"
 
 [dev-dependencies]
 indoc = "1.0.9"
