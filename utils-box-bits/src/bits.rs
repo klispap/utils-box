@@ -22,6 +22,25 @@ pub fn bits_to_vec(bits: u64, out_len: u8) -> Vec<u8> {
 }
 
 /// Convert vector to bits stream (Vec[0] is MSB)
+pub fn bit_vec_to_byte_vec(vec: &[u8]) -> Vec<u8> {
+    let mod_vec = vec.len() % 8;
+    let mut vec = vec.to_owned();
+
+    let mut res: Vec<u8> = vec![];
+
+    if mod_vec != 0 {
+        vec.append(&mut vec![0; mod_vec]);
+    }
+
+    for i in (0..vec.len()).step_by(8) {
+        let byte = vec[i..i + 8].iter().fold(0b0, |acc, &x| (acc << 1) | x);
+
+        res.push(byte);
+    }
+
+    res
+}
+
 pub fn vec_to_bits(vec: &[u8]) -> u64 {
     vec.iter().fold(0b0, |acc, &x| (acc << 1) | x as u64)
 }
@@ -33,7 +52,7 @@ pub fn bit_vec_to_hex_string(vec: &[u8]) -> String {
     let mut vec = vec.to_owned();
 
     if mod_vec != 0 {
-        vec.append(&mut vec![0; 4 - mod_vec]);
+        vec.append(&mut vec![0; mod_vec]);
     }
 
     for i in (0..vec.len()).step_by(4) {
