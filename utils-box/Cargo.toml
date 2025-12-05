@@ -1,6 +1,6 @@
 [package]
 name = "utils-box"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 authors = ["Agathoklis Papadopoulos <klis.pap@gmail.com>"]
 license = "MIT"
@@ -15,7 +15,7 @@ repository = "https://github.com/klispap/utils-box"
 
 [dependencies]
 utils-box-archives = { version = "1.0.1", optional = true }
-utils-box-bits = { version = "1.0.1", optional = true }
+utils-box-bits = { version = "1.0.2", optional = true }
 utils-box-config = { version = "1.0.1", optional = true }
 utils-box-connections = { version = "1.0.1", optional = true }
 utils-box-debug = { version = "1.0.1", optional = true }
